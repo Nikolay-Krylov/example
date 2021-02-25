@@ -1,0 +1,40 @@
+  <?php
+    require_once 'connection.php';
+    $link = mysqli_connect($host, $user, $password, $database) or die();
+    mysqli_set_charset($link, 'utf8');
+
+
+    $query = "SELECT ID FROM person";
+    $result = mysqli_query($link, $query) or die();
+    $rows = mysqli_num_rows($result); // количество строк
+    $query = "SELECT NAME, PASSWORD FROM person WHERE NAME='user$rows'";
+    $result = mysqli_query($link, $query) or die('error');
+    if ($result) {
+        $row = mysqli_fetch_row($result);
+        $nm = $row[0]; // name
+        $ps = $row[1]; // password
+
+    }
+
+    if (
+        isset($_POST['nameUser']) && ($_POST['nameUser'] != ' ') && isset($_POST['passwordUser'])
+        && ($_POST['passwordUser'] != ' ')
+    ) {
+        if (!empty($_POST['nameUser']) && !empty($_POST['passwordUser'])) {
+            $name = htmlentities(mysqli_real_escape_string($link, $_POST['nameUser']));
+            $password = md5(htmlentities(mysqli_real_escape_string($link, $_POST['passwordUser'])));
+
+            $query = "INSERT INTO user VALUE(NULL, '$name', '$password', '', '', '', '', '', '', '', '', '', '', '')";
+
+
+            $result = mysqli_query($link, $query) or die('eror' . mysqli_error($link));
+
+            mysqli_close($link);
+
+            echo "<script>  location.href= 'index.php';</script>";
+        } else {
+            echo "<br><br><div class='form_autorization_top' style='font-size:32pt;'>
+                    Данные не были введены</div>";
+        }
+    }
+    ?>
